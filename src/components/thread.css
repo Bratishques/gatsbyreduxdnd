@@ -1,0 +1,31 @@
+.threads-wrapper {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    column-gap: 70px;
+    overflow-x: scroll;
+    padding: 20px 0;
+    flex-basis: 300px;
+}
+
+.thread{
+
+    flex-shrink: 0;
+    width: 250px;
+}
+
+.thread-top, .thread-bottom {
+
+    background-color: beige;
+    padding: 10px 10px;
+}
+
+
+.thread-middle {
+    padding: 10px 20px;
+}
+
+input {
+    width: 100%;
+    min-width: 100px;
+}
