@@ -1,11 +1,28 @@
 import React from "react"
-import { DragDropContext, Droppable } from "react-beautiful-dnd"
+import { useState } from "react"
+import { DragDropContext, Droppable, resetServerContext } from "react-beautiful-dnd"
 import { connect } from "react-redux"
 import Thread from "./thread"
 import "./thread.css"
 
 const Threads = ({ count, dispatch, threads }) => {
-  console.log(threads)
+
+
+
+  
+  const dragEndFunc = (e) => {
+    console.log(e)
+    dispatch({
+      type: "MOVE_POST",
+      payload: {
+        ...e
+      },
+    })
+
+    
+  }
+
+
   return (
     <div>
       <div>Count : {count}</div>
@@ -16,16 +33,14 @@ const Threads = ({ count, dispatch, threads }) => {
       >
         +
       </button>
-      <DragDropContext onDragEnd={(e)=>{console.log(e)}}>
+      <DragDropContext onDragEnd={dragEndFunc}>
       <div className="threads-wrapper">
         {threads.map((thread, i) => {
           return (
-            <Droppable droppableId={thread.id} key={i}>
-            {provided => (
-              <Thread thread={thread}  provided = {provided} innerRef = {provided.innerRef}/>
-            )}
-            
-            </Droppable>
+
+              <Thread thread={thread}   key={thread.id}/>
+
+
             )
         })}
       </div>
@@ -41,6 +56,8 @@ function mapStateToProps(state) {
   }
 }
 
-function mapDispatchToProps(state) {}
+function mapDispatchToProps(state) {
+
+}
 
 export default connect(mapStateToProps)(Threads)

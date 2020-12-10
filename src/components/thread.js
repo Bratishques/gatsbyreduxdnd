@@ -7,7 +7,7 @@ const Thread = ({thread, provided}) => {
             <div className="thread-top">
             {thread.name}
             </div>
-            <div className = "thread-middle" ref={provided.innerRef} {...provided.droppableProps}>
+            <div className = "thread-middle">
             <Posts threadId = {thread.id} posts = {thread.posts} provided={provided}/>
             
             </div>
