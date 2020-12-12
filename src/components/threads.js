@@ -1,6 +1,6 @@
 import React from "react"
 import { useState } from "react"
-import { DragDropContext, Droppable, resetServerContext } from "react-beautiful-dnd"
+import { DragDropContext, Droppable } from "react-beautiful-dnd"
 import { connect } from "react-redux"
 import Thread from "./thread"
 import "./thread.css"
@@ -34,16 +34,24 @@ const Threads = ({ count, dispatch, threads }) => {
         +
       </button>
       <DragDropContext onDragEnd={dragEndFunc}>
-      <div className="threads-wrapper">
+      <Droppable droppableId = "ground"
+      direction="horizontal"
+      type="column">
+      {provided => (
+        <div className="threads-wrapper" ref={provided.innerRef} {...provided.droppableProps}>
         {threads.map((thread, i) => {
           return (
 
-              <Thread thread={thread}   key={thread.id}/>
+              <Thread thread={thread}   key={thread.id} index = {i}/>
 
 
             )
         })}
+        {provided.placeholder}
       </div>
+      )}
+     
+      </Droppable>
       </DragDropContext>
     </div>
   )

@@ -1,9 +1,10 @@
-import React, { useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { connect } from "react-redux"
 
 const PostAdder = ({addPost, threadId}) => {
   const [postAdding, setPostAdding] = useState(false)
   const [name, setName] = useState("")
+  const inputRef = useRef(null)
 
   const clickHandler = () => {
     if (postAdding && name.length > 0) {
@@ -12,11 +13,19 @@ const PostAdder = ({addPost, threadId}) => {
     setPostAdding(!postAdding)
     setName("")
   }
+
+  useEffect(() => {
+    if (postAdding) {
+      inputRef.current.focus()
+    }
+  }, [postAdding])
+
   return (
     <div>
       <div>
         {postAdding && (
           <input
+          ref={inputRef}
             value={name}
             onChange={e => {
               setName(e.target.value)

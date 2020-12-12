@@ -1,4 +1,5 @@
 module.exports = {
+  pathPrefix: "/gatsbyreduxdnd",
   siteMetadata: {
     title: `GatsbyReduxDnD`,
     description: `Redux Gatsby + Drag and Drop`,
