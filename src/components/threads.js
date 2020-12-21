@@ -1,27 +1,32 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { useState } from "react"
 import { DragDropContext, Droppable } from "react-beautiful-dnd"
 import { connect } from "react-redux"
 import Thread from "./thread"
 import "./thread.css"
 
-const Threads = ({ count, dispatch, threads }) => {
-
-
-
-  
-  const dragEndFunc = (e) => {
-    console.log(e)
+const Threads = ({ count, dispatch, threads, focusedThread}) => {
+  const dragEndFunc = e => {
+    if (e.type === "column" && e.source.droppableId === "ground") {
+      dispatch({
+        type: "MOVE_COLUMNS",
+        payload: {
+          ...e,
+        }
+      })
+      return
+    }
     dispatch({
       type: "MOVE_POST",
       payload: {
-        ...e
+        ...e,
       },
     })
-
-    
+    return
   }
 
+
+ 
 
   return (
     <div>
@@ -33,25 +38,24 @@ const Threads = ({ count, dispatch, threads }) => {
       >
         +
       </button>
-      <DragDropContext onDragEnd={dragEndFunc}>
-      <Droppable droppableId = "ground"
-      direction="horizontal"
-      type="column">
-      {provided => (
-        <div className="threads-wrapper" ref={provided.innerRef} {...provided.droppableProps}>
-        {threads.map((thread, i) => {
-          return (
+      <DragDropContext onDragEnd={dragEndFunc} >
+        <Droppable droppableId="ground" direction="horizontal" type="column">
+          {provided => (
+            <div
 
-              <Thread thread={thread}   key={thread.id} index = {i}/>
+             
+              className="threads-wrapper"
+              ref={provided.innerRef}
+              {...provided.droppableProps}
 
-
-            )
-        })}
-        {provided.placeholder}
-      </div>
-      )}
-     
-      </Droppable>
+            >
+              {threads.map((thread, i) => {
+                return <Thread thread={thread} key={thread.id} index={i} focusedThread={focusedThread} />
+              })}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
       </DragDropContext>
     </div>
   )
@@ -59,13 +63,11 @@ const Threads = ({ count, dispatch, threads }) => {
 
 function mapStateToProps(state) {
   return {
+    focusedThread: state.focusedThread,
     count: state.count,
     threads: state.threads,
   }
 }
 
-function mapDispatchToProps(state) {
-
-}
 
 export default connect(mapStateToProps)(Threads)

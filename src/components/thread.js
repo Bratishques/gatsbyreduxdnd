@@ -2,11 +2,13 @@ import React from "react"
 import { Draggable } from "react-beautiful-dnd"
 import Posts from "./posts"
 
-const Thread = ({ thread, index }) => {
+const Thread = ({ thread, index, focusedThread }) => {
+
+  
   return (
     <Draggable draggableId={thread.id} index={index}>
       {provided => (
-        <div className="thread" ref = {provided.innerRef} {...provided.draggableProps}>
+        <div className={`thread ${focusedThread === thread.id && "focused"}`} ref = {provided.innerRef} {...provided.draggableProps}>
           <div className="thread-top" {...provided.dragHandleProps}>{thread.name}</div>
           <div className="thread-middle">
             <Posts threadId={thread.id} posts={thread.posts} />
@@ -17,5 +19,6 @@ const Thread = ({ thread, index }) => {
     </Draggable>
   )
 }
+
 
 export default Thread

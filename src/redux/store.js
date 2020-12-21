@@ -1,7 +1,8 @@
 import { v4 as uuidv4 } from "uuid"
 import { crashReporter, logger } from "./logger"
+import moveColumns from "./moveColumns"
 
-const { createStore, applyMiddleware } = require("redux")
+const { createStore, applyMiddleware, combineReducers } = require("redux")
 
 class Thread {
   constructor(name, id) {
@@ -25,10 +26,37 @@ const thread3 = new Thread("Helicopter", uuidv4())
 const initialState = {
   count: 0,
   threads: [thread1, thread2, thread3],
+  focusedThread: thread1.id,
 }
 
 function reducer(state, action) {
   switch (action.type) {
+    case "SWITCH_FOCUS":
+      let focused = state.focusedThread
+      let focusedIndex = 0
+      state.threads.map((a,i) => {
+        if (a.id === focused) {
+          focusedIndex = i
+        }
+      })
+      console.log(focusedIndex)
+      if (action.direction === "RIGHT" && focusedIndex < state.threads.length - 1) {
+        focused = state.threads[focusedIndex+1].id
+        return {
+          ...state,
+          focusedThread: focused
+        }
+      }
+      if (action.direction === "LEFT" && focusedIndex > 0) {
+        focused = state.threads[focusedIndex-1].id
+        return {
+          ...state,
+          focusedThread: focused
+        }
+      }
+      else return {
+        ...state,
+      }
     case "COUNT_PLUS":
       return { ...state, count: state.count + 1 }
 
@@ -43,6 +71,21 @@ function reducer(state, action) {
       return {
         ...state,
         threads: newThreads,
+      }
+
+    case "MOVE_COLUMNS":
+      let threadsArr = state.threads
+      let targetThread = threadsArr.find(
+        a => a.id === action.payload.draggableId
+      )
+      threadsArr.splice(action.payload.source.index, 1)
+      threadsArr.splice(action.payload.destination.index, 0, targetThread)
+      let newState = {
+        ...state,
+        threads: threadsArr,
+      }
+      return {
+        ...newState,
       }
 
     case "REMOVE_POST":
@@ -68,11 +111,9 @@ function reducer(state, action) {
           if (a.id === target.droppableId) {
             switch (target.index) {
               case 0:
-
                 a.posts = [indexPost, ...a.posts]
                 break
               case a.posts.length:
-
                 a.posts = [...a.posts, indexPost]
                 break
 
@@ -97,11 +138,10 @@ function reducer(state, action) {
           threads: newThreads,
         }
       } else {
-
-        newThreads = state.threads.map((a,i) => {
+        newThreads = state.threads.map((a, i) => {
           if (a.id === source.droppableId) {
-              a.posts.splice(source.index, 1)
-              a.posts.splice(target.index, 0, indexPost)
+            a.posts.splice(source.index, 1)
+            a.posts.splice(target.index, 0, indexPost)
           }
           return a
         })
@@ -110,6 +150,7 @@ function reducer(state, action) {
           threads: newThreads,
         }
       }
+
     default:
       return state
   }
